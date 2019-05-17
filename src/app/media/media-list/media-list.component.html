@@ -1,0 +1,138 @@
+<div style="padding: 30px;">
+  <div style="display: flex;justify-content: space-between;margin-bottom: 30px;">
+    <button nz-button nzType="primary" (click)="showUpload()">
+      <i nz-icon type="upload" theme="outline"></i>
+      上传文件
+    </button>
+    <nz-drawer [nzClosable]="false" [nzVisible]="uploadVisible" [nzWidth]="400"
+               nzPlacement="right" nzTitle="文件上传" (nzOnClose)="closeUpload()">
+      <div>
+        <nz-upload
+          nzType="drag"
+          [nzMultiple]="true"
+          [nzLimit]="0"
+          [nzSize]="5*1024"
+          nzListType="picture"
+          nzAction="/api/v1/file"
+          (nzChange)="handleChange($event)">
+          <p class="ant-upload-drag-icon">
+            <i nz-icon type="inbox"></i>
+          </p>
+          <p class="ant-upload-text">点击或者拖拽文件开始上传</p>
+          <p class="ant-upload-hint">支持多文件上传，单个文件大小不能超过5M</p>
+        </nz-upload>
+      </div>
+    </nz-drawer>
+
+
+    <nz-drawer [nzClosable]="false" [nzVisible]="mediaShowing" [nzWidth]="400"
+               nzPlacement="right" (nzOnClose)="closeShowMedia()">
+      <div>
+        <img style="width: 100%;" src="{{showingMedia.path}}">
+      </div>
+
+      <div style="padding: 20px 0;">
+        <textarea rows="3" nz-input placeholder="添加描述" [value]="showingMedia.description?showingMedia.description:''"
+                  (blur)="update_description($event.target.value)"></textarea>
+      </div>
+
+      <h4>信息</h4>
+
+      <div style="display: flex; align-items:center;padding-top: 10px;padding-bottom: 10px;">
+        <div style="font-size: 24px;flex-shrink:0;">
+          <i nz-icon type="file-word" theme="outline"></i>
+        </div>
+        <div style="flex-grow:1;margin-left: 20px;">
+          <div style="color: rgba(0,0,0,0.87);font-weight: 400;font-size: 16px;word-break: break-all;">
+            {{showingMedia.name}}
+          </div>
+          <div style="color:rgba(0,0,0,0.54);font-size: 14px;">{{showingMedia.mimetype}}</div>
+        </div>
+
+        <!--        <div style="font-size: 24px;flex-shrink:0;margin-left: 10px;">
+                  <button nz-button nzType="primary" [nzSize]="size" nzShape="circle">
+                    <i nz-icon type="edit" theme="outline"></i>
+                  </button>
+                </div>-->
+      </div>
+
+      <div style="display: flex; align-items:center;padding-top: 10px;padding-bottom: 10px;">
+        <div style="font-size: 24px;flex-shrink:0;">
+          <i nz-icon type="calendar" theme="outline"></i>
+        </div>
+        <div style="flex-grow:1;margin-left: 24px;">
+          <div style="color: rgba(0,0,0,0.87);font-weight: 400;font-size: 16px;">11月15日</div>
+          <div style="color:rgba(0,0,0,0.54);font-size: 14px;">周四，下午15:03</div>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items:center;padding-top: 10px;padding-bottom: 10px;">
+        <div style="font-size: 24px;flex-shrink:0;">
+          <i nz-icon type="link" theme="outline"></i>
+        </div>
+        <div style="flex-grow:1;margin-left: 24px;">
+          <!--<div style="color: rgba(0,0,0,0.87);font-weight: 400;font-size: 16px;word-break: break-all;">{{showingMedia?.path}}</div>-->
+          <div style="color:rgba(0,0,0,0.54);font-size: 14px;word-break: break-all;">{{showingMedia?.path}}</div>
+        </div>
+
+        <div style="font-size: 24px;flex-shrink:0;margin-left: 10px;">
+          <button ngxClipboard nz-button nzType="primary" (cbOnSuccess)="copyResult(true)"
+                  (cbOnError)="copyResult(false)" [cbContent]="showingMedia?.path" [nzSize]="size"
+                  nzShape="circle">
+            <i nz-icon type="copy" theme="outline"></i>
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-top: 40px;">
+        <button nz-button nzType="danger" nzBlock (click)="deleteMedia()">删除</button>
+      </div>
+
+    </nz-drawer>
+
+    <div>
+      <nz-input-group nzSuffixIcon="anticon anticon-search" style="width: 250px;">
+        <input #searchInput type="text" nz-input placeholder="请输入关键字"
+               (keyup.enter)="searchMedia(searchInput.value)">
+      </nz-input-group>
+    </div>
+  </div>
+
+
+  <div style="display:flex;flex-wrap:wrap;justify-content: center;">
+
+    <div style="width:220px;margin: 10px;" *ngFor="let media of medias" (click)="showMediaDetail(media)">
+      <div style="background-color: white;width:220px;height:161px;padding: 10px;
+  border:1px solid #e8e8e8;border-radius: 3px;">
+        <div style="display:block;
+        width: 200px;height: 141px;
+        background-repeat: no-repeat;
+      background-color: #eeeeee;
+      background-position:center;
+        background-size: contain;" [style.background-image]="'url(' + media.path+ ')'">
+        </div>
+
+      </div>
+      <div style="padding: 5px 10px;font-weight: 600;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+        {{media.name}}
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 30px;" *ngIf="loadingStatus>0">
+    <button *ngIf="loadingStatus===1" nz-button nzType="primary" nzBlock (click)="loadMore()">加载更多</button>
+
+    <div *ngIf="loadingStatus===2" style="text-align: center;line-height: 32px;">
+      <i nz-icon [type]="'loading'"></i>
+      <span style="margin-left: 10px;">加载中...</span>
+    </div>
+
+    <div *ngIf="loadingStatus===3" style="text-align: center;line-height: 32px;">
+      <span>没有更多了</span>
+    </div>
+
+  </div>
+
+</div>
+

@@ -1,0 +1,117 @@
+<div style="padding: 30px;">
+
+  <div style="display: flex;justify-content: space-between;margin-bottom: 30px;">
+    <button nz-button nzType="primary" (click)="newPost()"><i nz-icon type="edit" theme="outline"></i>写博客</button>
+    <div>
+      <nz-radio-group [(ngModel)]="searchType" (ngModelChange)="changeType($event)">
+        <label nz-radio-button nzValue='100'>所有</label>
+        <label nz-radio-button nzValue="1">已发布</label>
+        <label nz-radio-button nzValue="0">草稿</label>
+        <label nz-radio-button nzValue="-1">回收站</label>
+        <!--0 草稿，1 待审核 -1 已删除 2 已发布-->
+      </nz-radio-group>
+
+      <nz-input-group slot="" nzSuffixIcon="anticon anticon-search" style="width: 250px;margin-left: 16px;">
+        <input #searchInput type="text" nz-input placeholder="请输入关键字"
+               (keyup.enter)="search(searchInput.value)">
+      </nz-input-group>
+    </div>
+  </div>
+
+  <nz-list
+    [nzDataSource]="posts"
+    [nzItemLayout]="'horizontal'"
+    [nzRenderItem]="item">
+    <ng-template #item let-item>
+      <nz-list-item>
+        <nz-list-item-meta
+          [nzDescription]="nzDescription">
+          <ng-template #nzDescription>
+            <nz-card>
+              <div style="display: flex;">
+                <div style="flex-shrink: 0;margin-right: 24px;">
+                  <img src="https://via.placeholder.com/216x135"/>
+                </div>
+                <div style="flex-grow: 1;height: 135px;display: flex;flex-direction: column;">
+                  <div style="flex-shrink: 0;margin-bottom:6px;">
+                    <strong style="font-size: 16px;">{{item.title}}</strong>
+                  </div>
+                  <div style="flex-grow: 1;overflow: hidden;font-size: 12px;">
+                    {{item.description}}
+                  </div>
+
+                  <div style="flex-shrink: 0;margin-top: 5px;font-size: 13px;display: flex;">
+                    <div style="flex-grow: 1;">
+                      <nz-tag [nzColor]="tag.color" *ngFor="let tag of item.tags">{{tag.name}}</nz-tag>
+                    </div>
+                    <div style="flex-shrink: 0;">
+                      <a href="#">{{item.categories}}</a>
+                      <nz-divider nzType="vertical"></nz-divider>
+                      <span style="color: rgba(0,0,0,.45);font-size: 12px;">{{item.publish_date}}</span>
+                    </div>
+                  </div>
+
+                </div>
+                <div style="flex-shrink:0;margin-left: 60px;margin-right: 26px;width: 150px;height: 135px;
+                text-align: center;display: flex;    align-items: center;">
+                  <nz-card [nzBordered]="false" [nzBodyStyle]="actionStyle" style="height: 100px;">
+                    <div nz-card-grid [ngStyle]="gridStyle" (click)="editPost(item)">
+                      <div style="padding: 5px;display: flex;
+                      justify-content: center;align-items: center;flex-direction:column;">
+                        <i nz-icon type="edit" theme="outline"></i>
+                        <span style="font-size: 10px;">编辑</span>
+                      </div>
+                    </div>
+                    <div nz-card-grid [ngStyle]="gridStyle" (click)="viewPost(item)">
+                      <div style="padding: 5px;display: flex;
+                      justify-content: center;align-items: center;flex-direction:column;">
+                        <i nz-icon type="eye" theme="outline"></i>
+                        <span style="font-size: 10px;">访问</span>
+                      </div>
+                    </div>
+                    <div nz-card-grid [ngStyle]="gridStyle">
+                      <div style="padding: 5px;display: flex;
+                      justify-content: center;align-items: center;flex-direction:column;">
+                        <i nz-icon nzType="question-circle" nzTheme="outline"></i>
+                        <span style="font-size: 10px;">Edit</span>
+                      </div>
+                    </div>
+                    <div nz-card-grid [ngStyle]="gridStyle" (click)="removePost(item)">
+                      <div style="padding: 5px;display: flex;
+                      justify-content: center;align-items: center;flex-direction:column;">
+                        <i nz-icon type="delete" theme="outline"></i>
+                        <span style="font-size: 10px;">删除</span>
+                      </div>
+                    </div>
+                    <div nz-card-grid [ngStyle]="gridStyle">
+                      <div style="padding: 5px;display: flex;
+                      justify-content: center;align-items: center;flex-direction:column;">
+                        <i nz-icon type="share-alt" theme="outline"></i>
+                        <span style="font-size: 8px;">回收</span>
+                      </div>
+                    </div>
+                  </nz-card>
+                </div>
+              </div>
+            </nz-card>
+          </ng-template>
+        </nz-list-item-meta>
+      </nz-list-item>
+    </ng-template>
+  </nz-list>
+
+  <div style="margin-top: 30px;" *ngIf="loadingStatus>0">
+    <button *ngIf="loadingStatus===1" nz-button nzType="primary" nzBlock (click)="loadMore()">加载更多</button>
+
+    <div *ngIf="loadingStatus===2" style="text-align: center;line-height: 32px;">
+      <i nz-icon [type]="'loading'"></i>
+      <span style="margin-left: 10px;">加载中...</span>
+    </div>
+
+    <div *ngIf="loadingStatus===3" style="text-align: center;line-height: 32px;">
+      <span>没有更多了</span>
+    </div>
+
+  </div>
+
+</div>

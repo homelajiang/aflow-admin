@@ -1,0 +1,162 @@
+<div style="padding: 30px;">
+
+  <div style="display: flex;justify-content: space-between;margin-bottom: 30px;">
+    <button nz-button nzType="primary" (click)="savePost()"><i nz-icon type="save" theme="outline"></i>保存</button>
+    <div>
+      <button nz-button nzType="primary" (click)="prePost()"><i nz-icon type="eye" theme="outline"></i>预览</button>
+      <button nz-button nzType="primary" style="margin-left: 24px;" (click)="savePost(true)">
+        <i nz-icon  type="check-circle" theme="outline"></i>发布</button>
+    </div>
+  </div>
+
+  <div style="display: flex;align-items: flex-start;">
+    <div style="flex: 1;">
+      <div style="margin-bottom: 20px;">
+        <input nz-input placeholder="请输入标题" style="font-size: 22px;height: 50px;border-radius: 0px;"
+               [(ngModel)]="post.title">
+      </div>
+      <app-markdown [content]="post.content"></app-markdown>
+    </div>
+
+    <div style="width: 280px;background-color: antiquewhite;margin-left: 30px;">
+      <nz-card [nzBordered]="false" [nzTitle]="postSettingTitle">
+
+        <ng-template #postSettingTitle>
+          <div style="text-align: center;width: 100%;">
+            <i nz-icon type="setting" selectTagstheme="twotone"></i>
+            &nbsp;&nbsp;设置
+          </div>
+        </ng-template>
+
+        <div style="margin-top: 10px;margin-bottom: 10px;">
+          <i nz-icon type="info-circle" theme="outline"></i>
+          状态：
+          <strong>{{showStatusText()}}</strong>
+          <a style="margin-left: 6px;" *ngIf="post.status!==0" (click)="setAsDraft()">设为草稿</a>
+        </div>
+
+        <div style="margin-top: 10px;margin-bottom: 10px;">
+          <i nz-icon type="lock" theme="outline"></i>
+          公开度：
+          <strong>{{showOpenText()}}</strong>
+          <a style="margin-left: 6px;" *ngIf="!openStatusEditing" (click)="toggleOpenMenu(true)">编辑</a>
+          <div style="margin: 5px 18px 16px 18px " *ngIf="openStatusEditing">
+            <nz-radio-group [(ngModel)]="openStatus">
+              <label nz-radio [ngStyle]="radioStyle" nzValue="0">公开</label>
+              <div *ngIf="openStatus=='0'" style="margin-left: 16px;">
+                <label nz-checkbox [(ngModel)]="stick">将文章置于首页顶端</label>
+              </div>
+              <label nz-radio [ngStyle]="radioStyle" nzValue="1">密码保护</label>
+              <div *ngIf="openStatus=='1'" style="margin-left: 16px;">
+                <input nz-input placeholder="密码" [nzSize]="'small'" [(ngModel)]="postPw">
+              </div>
+              <label nz-radio [ngStyle]="radioStyle" nzValue="2">私密</label>
+            </nz-radio-group>
+            <div style="margin-top: 5px;">
+              <button nz-button nzType="primary" [nzSize]="'small'" (click)="changeOpenStatus()">确定</button>
+              <button nz-button nzType="default" [nzSize]="'small'" style="margin-left: 8px;"
+                      (click)="toggleOpenMenu(false)">取消
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 10px;margin-bottom: 10px;">
+          <i nz-icon type="message" theme="outline"></i>
+          评论：
+          <strong>{{showCommentStatusText()}}</strong>
+          <a style="margin-left: 6px;" *ngIf="!commentStatusEditing" (click)="toggleCommentMenu(true)">编辑</a>
+          <div style="margin: 5px 18px 16px 18px " *ngIf="commentStatusEditing">
+            <nz-radio-group [(ngModel)]="commentStatus">
+              <label nz-radio [ngStyle]="radioStyle" nzValue="0">允许评论</label>
+              <div *ngIf="commentStatus=='0'" style="margin-left: 16px;">
+                <label nz-checkbox [(ngModel)]="needReview">评论需要审核</label>
+              </div>
+              <label nz-radio [ngStyle]="radioStyle" nzValue="1">禁止评论</label>
+            </nz-radio-group>
+            <div style="margin-top: 5px;">
+              <button nz-button nzType="primary" [nzSize]="'small'" (click)="changeCommentStatus()">确定</button>
+              <button nz-button nzType="default" [nzSize]="'small'" style="margin-left: 8px;"
+                      (click)="toggleCommentMenu(false)">取消
+              </button>
+            </div>
+          </div>
+        </div>
+        <nz-divider></nz-divider>
+
+        <div style="padding-bottom: 5px;"><strong>分类 </strong></div>
+
+        <nz-radio-group [(ngModel)]="post.categories">
+          <label nz-radio [ngStyle]="radioStyle" [nzValue]="null">未分类</label>
+          <label nz-radio [ngStyle]="radioStyle" [nzValue]="item"
+                 *ngFor="let item of categories">{{item.name}}</label>
+        </nz-radio-group>
+
+        <div style="margin-top: 10px;">
+          <a (click)="toggleCategoriesMenu()"><i nz-icon type="plus"></i> 新建分类</a>
+        </div>
+
+        <div style="margin-top: 10px;" *ngIf="showCategoriesMenu">
+          <nz-input-group nzSearch [nzSuffix]="suffixButton">
+            <input type="text" nz-input placeholder="输入分类名称" [(ngModel)]="newCategoriesName">
+          </nz-input-group>
+          <ng-template #suffixButton>
+            <button nz-button nzType="primary" nzSearch (click)="createCategories()">创建</button>
+          </ng-template>
+        </div>
+
+
+        <nz-divider></nz-divider>
+
+        <div style="padding-bottom: 10px;"><strong>标签</strong></div>
+        <div>
+          <nz-tag
+            *ngFor="let tag of this.post.tags; let i = index;"
+            [nzMode]="'closeable'"
+            (nzAfterClose)="handleTagClose(tag)">
+            {{ sliceTagName(tag.name) }}
+          </nz-tag>
+          <nz-tag
+            *ngIf="!tagInputVisible"
+            class="editable-tag"
+            (click)="showTagInput()">
+            <i nz-icon type="plus"></i> 新建标签
+          </nz-tag>
+        </div>
+
+
+        <input
+          #inputElement
+          nz-input
+          nzSize="small"
+          *ngIf="tagInputVisible" type="text"
+          [(ngModel)]="newTagValue"
+          style="width: 78px;"
+          (blur)="createTag()"
+          (keydown.enter)="createTag()">
+
+        <div style="margin-top: 10px;" (click)="toggleTagMenu()">
+          <a> 选择常用标签</a>
+        </div>
+
+        <div style="border:1px solid #ddd;padding: 8px;margin-top: 5px;" *ngIf="showTagMenu">
+          <nz-tag
+            (click)="selectTag(tag)"
+            *ngFor="let tag of tags; let i = index;">
+            {{ sliceTagName(tag.name) }}
+          </nz-tag>
+        </div>
+
+        <nz-divider></nz-divider>
+        <div style="display: flex;margin-bottom: 14px;">
+          <strong style="flex-grow: 1;">封面</strong>
+        </div>
+        <img *ngIf="coverSelected" style="width: 100%;" src="{{post.cover}}"/>
+        <div style="margin-top: 10px;">
+          <a class="ng-star-inserted" (click)="toggleCover();">{{coverSelected ? '取消封面图片' : '选择封面图片'}}</a>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+
+</div>

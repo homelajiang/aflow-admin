@@ -1,0 +1,11 @@
+/* You can add global styles to this media, and also import other style medias */
+@import "../node_modules/codemirror/lib/codemirror.css";
+@import "./assets/moe/base16-light.css";
+@import "./assets/moe/moe-style.css";
+.CodeMirror-scroll{
+  height: 100%;
+}
+
+.ant-tag {
+  margin-bottom: 8px;
+}

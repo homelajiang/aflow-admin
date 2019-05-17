@@ -1,0 +1,11 @@
+.media_covered {
+  display: block;
+}
+
+.media_covered_area {
+  display: none;
+}
+
+.media_covered:hover .media_covered_area {
+  display: block;
+}

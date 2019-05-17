@@ -1,0 +1,237 @@
+<div style="margin:0 24px;">
+
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="6">
+      <nz-card [nzBordered]="false" [nzBodyStyle]="cardBottomPadding">
+        <div style="line-height: 22px;height: 22px;color:rgba(0,0,0,.45);">
+          <span>
+            <span>总博客数</span>
+          </span>
+          <span nz-tooltip nzTitle="prompt text"
+                style="position: absolute;right: 0;top: 0;margin-top: 20px;margin-right: 24px;">
+            <strong><i nz-icon nzType="info-circle" nzTheme="outline"></i></strong>
+          </span>
+        </div>
+        <div style="margin-top: 4px;">
+          <span style="font-size: 30px;line-height: 38px;color:rgba(0,0,0,.85)">{{statistics.blog.current}}</span>
+        </div>
+
+        <div style="height:46px;">
+          <div *ngIf="statistics.blog.statistics.length>0">
+            <v-chart [forceFit]="true" [height]="46" [data]="statistics.blog.statistics" [scale]="lineScale"
+                     padding="5">
+              <v-tooltip></v-tooltip>
+              <v-line position="date*value"></v-line>
+              <v-point position="date*value" shape="circle"></v-point>
+            </v-chart>
+          </div>
+        </div>
+        <nz-divider style="margin:12px 0 8px 0;"></nz-divider>
+        <div>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">本周博客数</span>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">{{statistics.blog.current}}</span>
+        </div>
+      </nz-card>
+    </div>
+
+    <div nz-col [nzSpan]="6">
+      <nz-card [nzBordered]="false" [nzBodyStyle]="cardBottomPadding">
+        <div style="line-height: 22px;height: 22px;color:rgba(0,0,0,.45);">
+          <span>
+            <span>访问量</span>
+          </span>
+          <span nz-tooltip nzTitle="prompt text"
+                style="position: absolute;right: 0;top: 0;margin-top: 20px;margin-right: 24px;">
+            <strong><i nz-icon nzType="info-circle" nzTheme="outline"></i></strong>
+          </span>
+        </div>
+        <div style="margin-top: 4px;">
+          <span style="font-size: 30px;line-height: 38px;color:rgba(0,0,0,.85)">{{statistics.view.total}}</span>
+        </div>
+
+        <div style="height:46px;">
+          <div *ngIf="statistics.view.statistics.length>0">
+            <v-chart [forceFit]='true' [height]="46" [data]="statistics.view.statistics" [scale]="scale" [padding]="0"
+                     renderer="svg">
+              <v-tooltip></v-tooltip>
+              <v-smooth-area position="date*value"></v-smooth-area>
+            </v-chart>
+          </div>
+        </div>
+        <nz-divider style="margin:12px 0 8px 0;"></nz-divider>
+        <div>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">日访问量</span>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">{{statistics.view.current}}</span>
+        </div>
+      </nz-card>
+    </div>
+
+    <div nz-col [nzSpan]="6">
+      <nz-card [nzBordered]="false" [nzBodyStyle]="cardBottomPadding">
+        <div style="line-height: 22px;height: 22px;color:rgba(0,0,0,.45);">
+          <span>
+            <span>评论数</span>
+          </span>
+          <span nz-tooltip nzTitle="prompt text"
+                style="position: absolute;right: 0;top: 0;margin-top: 20px;margin-right: 24px;">
+            <strong><i nz-icon nzType="info-circle" nzTheme="outline"></i></strong>
+          </span>
+        </div>
+        <div style="margin-top: 4px;">
+          <span style="font-size: 30px;line-height: 38px;color:rgba(0,0,0,.85)">{{statistics.comment.total}}</span>
+        </div>
+
+        <div style="height:46px;">
+          <div *ngIf="statistics.comment.statistics.length>0">
+            <v-chart forceFit="true" [padding]="0" [height]="46" [data]="statistics.comment.statistics" renderer="svg">
+              <v-tooltip></v-tooltip>
+              <v-bar position="date*value"></v-bar>
+            </v-chart>
+          </div>
+        </div>
+        <nz-divider style="margin:12px 0 8px 0;"></nz-divider>
+        <div>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">日评论数</span>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">{{statistics.comment.current}}</span>
+        </div>
+      </nz-card>
+    </div>
+
+    <div nz-col [nzSpan]="6">
+      <nz-card [nzBordered]="false" [nzBodyStyle]="cardBottomPadding">
+        <div style="line-height: 22px;height: 22px;color:rgba(0,0,0,.45);">
+          <span>
+            <span>存储空间</span>
+          </span>
+          <span nz-tooltip nzTitle="prompt text"
+                style="position: absolute;right: 0;top: 0;margin-top: 20px;margin-right: 24px;">
+            <strong><i nz-icon nzType="info-circle" nzTheme="outline"></i></strong>
+          </span>
+        </div>
+        <div style="margin-top: 4px;">
+          <span style="font-size: 30px;line-height: 38px;color:rgba(0,0,0,.85)">70%</span>
+        </div>
+
+        <div style="height:46px;">
+          <div nz-row>
+            <div nz-col nzSpan="12">
+            </div>
+            <div nz-col nzSpan="12" style="text-align: end;">
+              <b>{{statistics.storage.used}}</b>
+              of
+              <b>{{statistics.storage.total}}</b>
+            </div>
+          </div>
+          <nz-progress [nzPercent]=statistics.storage.percent [nzShowInfo]="false"></nz-progress>
+        </div>
+        <nz-divider style="margin:12px 0 8px 0;"></nz-divider>
+        <div>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">存储数量</span>
+          <span style="color:rgba(0,0,0,.85);margin-left: 8px;">{{statistics.storage.mediaCount}}</span>
+        </div>
+      </nz-card>
+    </div>
+
+    <div nz-col [nzSpan]="16" style="margin-top: 24px;">
+      <nz-card nzTitle="待办事项">
+        <nz-list [nzDataSource]="todoList"
+                 [nzRenderItem]="item"
+                 [nzItemLayout]="'horizontal'"
+                 [nzPagination]="pagination">
+          <ng-template #item let-item>
+            <nz-list-item>
+              <nz-list-item-meta
+                nzAvatar="{{item.creator.img}}"
+                [nzDescription]="nzDescription">
+                <ng-template #nzDescription>
+                  <nz-card>
+                    <div style="display: flex;">
+                      <div style="flex-grow: 1;">
+                        <strong>{{item.creator.name}}</strong>
+                        评论了 <a href="https://ng.ant.design">《{{item.post.title}}》</a>
+                        <span style="color: rgba(0,0,0,.45);font-size: 12px;">{{item.create_date}}</span>
+                        <div style="margin-top: 6px;">
+                          <span>{{item.content}}</span>
+                        </div>
+                      </div>
+                      <div style="flex-shrink:0;margin-left: 30px;">
+                        <a (click)="acceptComment(item.id)">批准</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <a (click)="rejectComment(item.id)">删除</a>
+                      </div>
+                    </div>
+                  </nz-card>
+                </ng-template>
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+
+          <ng-template #pagination>
+            <nz-pagination [nzPageIndex]="todoPage" [nzTotal]="todoCount" [nzPageSize]=10 *ngIf="todoCount===0"
+                           (nzPageIndexChange)="getTodoList($event)"></nz-pagination>
+          </ng-template>
+
+        </nz-list>
+      </nz-card>
+
+      <nz-modal [(nzVisible)]="showDelCommentDialog" nzTitle="请选择删除原因" (nzOnCancel)="onCancelDelCommentDialog()"
+                (nzOnOk)="onEnsureDelCommentDialog()">
+        <nz-radio-group [(ngModel)]="reject_reason">
+          <label nz-radio [ngStyle]="style" nzValue="广告推广">广告推广</label>
+          <label nz-radio [ngStyle]="style" nzValue="血腥暴力">血腥暴力</label>
+          <label nz-radio [ngStyle]="style" nzValue="色情内容">色情内容</label>
+          <label nz-radio [ngStyle]="style" nzValue="其他"> 其他...
+            <input type="text" nz-input *ngIf="reject_reason=='其他'" style="width: 200px; margin-left: 10px;"
+                   [(ngModel)]="reject_other_reason">
+          </label>
+        </nz-radio-group>
+      </nz-modal>
+
+    </div>
+
+    <div nz-col [nzSpan]="8">
+
+      <div nz-row style="margin-top: 24px;" [nzGutter]="24">
+
+        <div nz-col [nzSpan]="24">
+          <nz-card>
+            <nz-upload
+              nzType="drag"
+              [nzMultiple]="true"
+              [nzLimit]="0"
+              [nzSize]="5*1024"
+              nzListType="picture"
+              nzAction="https://jsonplaceholder.typicode.com/posts/"
+              (nzChange)="handleChange($event)">
+              <p class="ant-upload-drag-icon">
+                <i nz-icon nzType="inbox" nzTheme="outline"></i>
+              </p>
+              <p class="ant-upload-text">点击或者拖拽文件开始上传</p>
+              <p class="ant-upload-hint">支持多文件上传，单个文件大小不能超过5M</p>
+            </nz-upload>
+          </nz-card>
+        </div>
+
+        <div nz-col [nzSpan]="24" style="margin-top: 24px;">
+
+          <nz-card nzTitle="热门博客" [nzExtra]="popularPostsTemplate">
+            <div *ngFor="let post of sort_posts">
+              <app-post-dashboard [statistics_post]="post"></app-post-dashboard>
+            </div>
+          </nz-card>
+          <ng-template #popularPostsTemplate>
+            <nz-radio-group [(ngModel)]="sort_range" (ngModelChange)="getSortPosts($event)">
+              <label nz-radio-button nzValue="all">所有</label>
+              <label nz-radio-button nzValue="month">月</label>
+              <label nz-radio-button nzValue="week">周</label>
+            </nz-radio-group>
+          </ng-template>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,136 @@
+<div style="padding: 30px;">
+
+  <nz-card [nzBordered]="false" [nzTitle]="cardTitle" [nzExtra]="extraTemplate">
+
+    <nz-list *ngIf="searchType==='-1'"
+             [nzDataSource]="comments"
+             [nzItemLayout]="'horizontal'"
+             [nzPagination]="pagination"
+             [nzRenderItem]="item">
+      <ng-template #item let-item>
+        <nz-list-item [nzContent]="nzContent" [nzActions]="[reasonAction]">
+          <ng-template #reasonAction>{{item.delete_reason}}</ng-template>
+          <nz-list-item-meta
+            [nzTitle]="nzTitle"
+            nzAvatar="{{item.creator.img}}"
+            nzDescription="{{item.content}}">
+            <ng-template #nzTitle>
+              <a href="https://ng.ant.design">{{item.creator.name}}</a>
+              <span style="font-size: 10px;color: rgba(0,0,0,.45);margin-left: 10px;">{{item.create_date}}</span>
+            </ng-template>
+            <ng-template #nzContent>
+              <div>
+                <a (click)="filterPost(item.post)">《{{item.post.title}}》</a>
+              </div>
+            </ng-template>
+          </nz-list-item-meta>
+        </nz-list-item>
+      </ng-template>
+      <ng-template #pagination>
+        <nz-pagination [nzPageIndex]="currentPage" [nzTotal]="commentCount" [nzPageSize]='pageSize'
+                       (nzPageIndexChange)="pageSelect($event)"></nz-pagination>
+      </ng-template>
+    </nz-list>
+
+    <nz-list *ngIf="searchType==='1'"
+             [nzDataSource]="comments"
+             [nzItemLayout]="'horizontal'"
+             [nzPagination]="pagination"
+             [nzRenderItem]="item">
+      <ng-template #item let-item>
+        <nz-list-item [nzContent]="nzContent" [nzActions]="[reviewAction, deleteAction]">
+          <ng-template #reviewAction><a (click)="acceptComment(item.id)">审核通过</a></ng-template>
+          <ng-template #deleteAction><a (click)="deleteComment(item.id)">删除</a></ng-template>
+          <nz-list-item-meta
+            [nzTitle]="nzTitle"
+            nzAvatar="{{item.creator.img}}"
+            nzDescription="{{item.content}}">
+            <ng-template #nzTitle>
+              <a href="https://ng.ant.design">{{item.creator.name}}</a>
+              <span style="font-size: 10px;color: rgba(0,0,0,.45);margin-left: 10px;">{{item.create_date}}</span>
+            </ng-template>
+            <ng-template #nzContent>
+              <div>
+                <a (click)="filterPost(item.post.id)">《{{item.post.title}}》</a>
+              </div>
+            </ng-template>
+          </nz-list-item-meta>
+        </nz-list-item>
+      </ng-template>
+      <ng-template #pagination>
+        <nz-pagination [nzPageIndex]="currentPage" [nzTotal]="commentCount" [nzPageSize]='pageSize'
+                       (nzPageIndexChange)="pageSelect($event)"></nz-pagination>
+      </ng-template>
+    </nz-list>
+
+    <nz-list *ngIf="searchType==='0'"
+             [nzDataSource]="comments"
+             [nzItemLayout]="'horizontal'"
+             [nzPagination]="pagination"
+             [nzRenderItem]="item">
+      <ng-template #item let-item>
+        <nz-list-item [nzContent]="nzContent" [nzActions]="[deleteAction]">
+          <ng-template #deleteAction><a (click)="deleteComment(item.id)">删除</a></ng-template>
+          <nz-list-item-meta
+            [nzTitle]="nzTitle"
+            nzAvatar="{{item.creator.img}}"
+            nzDescription="{{item.content}}">
+            <ng-template #nzTitle>
+              <a href="https://ng.ant.design">{{item.creator.name}}</a>
+              <span style="font-size: 10px;color: rgba(0,0,0,.45);margin-left: 10px;">{{item.create_date}}</span>
+            </ng-template>
+            <ng-template #nzContent>
+              <div>
+                <a (click)="filterPost(item.post)">《{{item.post.title}}》</a>
+              </div>
+            </ng-template>
+          </nz-list-item-meta>
+        </nz-list-item>
+      </ng-template>
+      <ng-template #pagination>
+        <nz-pagination [nzPageIndex]="currentPage" [nzTotal]="commentCount" [nzPageSize]='pageSize'
+                       (nzPageIndexChange)="pageSelect($event)"></nz-pagination>
+      </ng-template>
+    </nz-list>
+
+  </nz-card>
+
+  <ng-template #cardTitle>
+    <div *ngIf="filter_post"
+         style="border: 1px solid #91d5ff;background-color: #e6f7ff;padding: 8px 15px;border-radius: 4px;font-size: 12px;">
+      <span>
+        《{{filter_post.title}}》
+      </span>
+      <a style="margin-left: 8px;" (click)="closeFilterPost()">
+        <i nz-icon type="close-circle" theme="twotone"></i>
+      </a>
+    </div>
+  </ng-template>
+
+  <ng-template #extraTemplate>
+    <nz-radio-group [(ngModel)]="searchType" (ngModelChange)="changeType($event)">
+      <label nz-radio-button nzValue="0">已发布</label>
+      <label nz-radio-button nzValue="1">待审核</label>
+      <label nz-radio-button nzValue="-1">已删除</label>
+    </nz-radio-group>
+
+    <nz-input-group slot="" nzSuffixIcon="anticon anticon-search" style="width: 250px;margin-left: 16px;">
+      <input #searchInput type="text" nz-input placeholder="请输入关键字"
+             (keyup.enter)="search(searchInput.value)">
+    </nz-input-group>
+  </ng-template>
+
+
+  <nz-modal [(nzVisible)]="isVisible" nzTitle="请选择删除原因" (nzOnCancel)="cancel()" (nzOnOk)="ensure()">
+    <nz-radio-group [(ngModel)]="delete_reason">
+      <label nz-radio [ngStyle]="style" nzValue="广告推广">广告推广</label>
+      <label nz-radio [ngStyle]="style" nzValue="血腥暴力">血腥暴力</label>
+      <label nz-radio [ngStyle]="style" nzValue="色情内容">色情内容</label>
+      <label nz-radio [ngStyle]="style" nzValue="其他"> 其他...
+        <input type="text" nz-input *ngIf="delete_reason=='其他'" style="width: 200px; margin-left: 10px;"
+               [(ngModel)]="other_reason">
+      </label>
+    </nz-radio-group>
+  </nz-modal>
+
+</div>

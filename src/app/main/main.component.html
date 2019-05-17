@@ -1,0 +1,65 @@
+<nz-layout>
+  <nz-sider style="overflow: auto; height: 100vh; position: fixed; left: 0">
+    <div class="logo">
+    </div>
+
+    <ul nz-menu [nzTheme]="'dark'" [nzMode]="'inline'">
+      <li nz-menu-item routerLink="/dashboard"><span>
+       <i nz-icon nzType="dashboard" nzTheme="outline"></i>
+        <span
+          class="nav-text">工作台</span></span>
+      </li>
+      <li nz-menu-item routerLink="/posts">
+        <span>
+        <i nz-icon nzType="folder" nzTheme="outline"></i>
+          <span class="nav-text">文章</span></span>
+      </li>
+      <li nz-menu-item routerLink="/comments">
+        <span>
+        <i nz-icon nzType="message" nzTheme="outline"></i>
+          <span class="nav-text">评论</span></span>
+      </li>
+      <li nz-menu-item routerLink="/medias">
+        <span>
+         <i nz-icon nzType="picture" nzTheme="outline"></i>
+          <span class="nav-text">多媒体</span></span></li>
+
+      <li nz-menu-item routerLink="/categories">
+        <span><i nz-icon nzType="bars" nzTheme="outline"></i>
+          <span class="nav-text">分类</span></span>
+      </li>
+      <li nz-menu-item routerLink="/tags"><span>
+<i nz-icon nzType="tags" nzTheme="outline"></i>
+        <span
+          class="nav-text">标签</span></span></li>
+      <li nz-menu-item [routerLink]="['/setting']">
+        <span><i nz-icon nzType="setting" nzTheme="outline"></i><span
+          class="nav-text">设置</span></span></li>
+    </ul>
+  </nz-sider>
+  <nz-layout style="margin-left:200px;background-color: #f2f2f2;">
+    <nz-header style="background: #f2f2f2; padding:0 30px;;">
+      <h1 style="display: inline-block;font-size: 30px;line-height: 64px;margin: 0;">{{title}}</h1>
+      <div style="float: right;">
+        <nz-badge nzDot>
+          <i nz-icon type="bell" theme="fill"></i>
+        </nz-badge>
+
+        <nz-badge nzDot>
+          <nz-avatar nzSrc="https://i.loli.net/2018/12/14/5c1351e690df1.jpg"></nz-avatar>
+        </nz-badge>
+      </div>
+    </nz-header>
+    <nz-content>
+      <div>
+        <!--<app-dashboard></app-dashboard>-->
+        <!--<app-media-list></app-media-list>-->
+        <!--<app-post-list></app-post-list>-->
+        <!--<app-tags></app-tags>-->
+        <!--<app-post-edit></app-post-edit>-->
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+    <nz-footer style="text-align: center;">Ant Design ©2018 Implement By Angular</nz-footer>
+  </nz-layout>
+</nz-layout>

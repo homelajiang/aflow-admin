@@ -1,0 +1,134 @@
+<div style="padding: 30px;">
+
+  <nz-drawer [nzClosable]="false" [nzVisible]="editMode" [nzWidth]="400" (nzOnClose)="closeEditDrawer()"
+             nzPlacement="right" [nzTitle]="editCategoriesModel?.name">
+
+    <form nz-form [formGroup]="editForm" (ngSubmit)="updateCategories()">
+
+      <nz-form-item>
+        <nz-form-label>别名</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="alias">
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>图片连接</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input formControlName="image"
+                    [nzAutosize]="{ minRows: 3, maxRows: 3 }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label>描述</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input nz-input formControlName="description"
+                    [nzAutosize]="{ minRows: 4, maxRows: 4 }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <button nz-button nzType="primary"><i nz-icon type="save" theme="outline"></i>保存</button>
+
+    </form>
+
+  </nz-drawer>
+
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-spin [nzSpinning]="isSpinning">
+        <nz-card [nzBordered]="false" nzTitle="添加分类" nzLayout="vertical">
+
+          <form nz-form [formGroup]="categoriesForm" (ngSubmit)="createCategories()">
+
+            <nz-form-item>
+              <nz-form-label>名称</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="name">
+                <nz-form-explain *ngIf="categoriesForm.get('name').dirty && categoriesForm.get('name').errors">请输入名称
+                </nz-form-explain>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>别名</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="alias">
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>图片地址</nz-form-label>
+              <nz-form-control>
+          <textarea nz-input formControlName="image"
+                    [nzAutosize]="{ minRows: 2, maxRows: 2 }"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+
+
+            <nz-form-item>
+              <nz-form-label>描述</nz-form-label>
+              <nz-form-control>
+          <textarea nz-input nz-input formControlName="description"
+                    [nzAutosize]="{ minRows: 4, maxRows: 4 }"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+
+            <button nz-button nzType="primary"><i nz-icon type="save" theme="outline"></i>保存</button>
+
+          </form>
+
+        </nz-card>
+      </nz-spin>
+    </div>
+
+    <div nz-col [nzSpan]="16">
+      <nz-card [nzBordered]="false" nzTitle="分类列表" [nzExtra]="extraTemplate">
+        <nz-list
+          [nzDataSource]="categories"
+          [nzItemLayout]="'horizontal'"
+          [nzPagination]="pagination"
+          [nzRenderItem]="item">
+          <ng-template #item let-item>
+            <nz-list-item [nzActions]="[editAction,moreAction]">
+              <ng-template #editAction><a (click)="editCategories(item)">编辑</a></ng-template>
+              <ng-template #moreAction><a (click)="deleteCategories(item)" style="color: red;">删除</a></ng-template>
+              <nz-list-item-meta
+                [nzTitle]="nzTitle"
+                [nzAvatar]="nzAvatar"
+                nzDescription={{item.description}}>
+
+                <ng-template #nzTitle>
+                  {{item.name}} - {{item.alias}}
+                </ng-template>
+
+                <ng-template #nzAvatar>
+                  <nz-avatar nzIcon="anticon anticon-user"
+                             [nzShape]="'square'" [nzSize]="'large'"
+                             nzSrc={{item.image}}>
+                  </nz-avatar>
+                </ng-template>
+
+              </nz-list-item-meta>
+            </nz-list-item>
+          </ng-template>
+          <ng-template #pagination>
+            <nz-pagination [nzPageIndex]="currentPage" [nzTotal]='categoriesCount' [nzPageSize]='pageSize'
+                           (nzPageIndexChange)="pageSelect($event)"></nz-pagination>
+          </ng-template>
+        </nz-list>
+      </nz-card>
+
+      <ng-template #extraTemplate>
+        <nz-input-group nzSuffixIcon="anticon anticon-search" style="width: 250px;">
+          <input #searchInput type="text" nz-input placeholder="请输入关键字"
+                 (keyup.enter)="search(searchInput.value)">
+        </nz-input-group>
+      </ng-template>
+
+    </div>
+  </div>
+
+</div>
